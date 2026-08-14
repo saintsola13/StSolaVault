@@ -2,7 +2,7 @@ const K={pin:'ssv_pin',photos:'ssv_photos',pass:'ssv_pass'};
 let pin='',editId=null;
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const load=(k,f)=>{try{const r=localStorage.getItem(k);return r?JSON.parse(r):f}catch{return f}};
-const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){console.warn('save failed',e);return false}};
 const hash=s=>{let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i)|0;return'h'+Math.abs(h).toString(36)};
 const reduceMotion=()=>window.matchMedia('(prefers-reduced-motion:reduce)').matches;
 
@@ -86,18 +86,35 @@ function drawPhotos(){
       if(vi)vi.src=p.d;
       if(v){v.classList.remove('hidden');v.classList.add('flex')}
     };
-    c.querySelector('.del').onclick=e=>{e.stopPropagation();ps.splice(i,1);save(K.photos,ps);drawPhotos()};
+    c.querySelector('.del').onclick=e=>{
+      e.stopPropagation();
+      const next=load(K.photos,[]).filter(x=>x.id!==p.id);
+      save(K.photos,next);
+      drawPhotos();
+    };
     g.appendChild(c);
   });
 }
+
 function addPhotos(files){
-  const ps=load(K.photos,[]);
-  [...files].forEach(f=>{
-    if(!f.type.startsWith('image/')||f.size>3.5e6)return;
+  const list=[...files].filter(f=>f.type.startsWith('image/')&&f.size<=4e6);
+  if(!list.length)return;
+  let i=0;
+  function next(){
+    if(i>=list.length){drawPhotos();return}
+    const f=list[i++];
     const r=new FileReader();
-    r.onload=()=>{ps.unshift({id:Date.now()+Math.random(),d:r.result});save(K.photos,ps.slice(0,20));drawPhotos()};
+    r.onload=()=>{
+      const ps=load(K.photos,[]);
+      ps.unshift({id:Date.now()+'_'+Math.random().toString(36).slice(2),d:r.result});
+      const ok=save(K.photos,ps.slice(0,15));
+      if(!ok)alert('Storage full. Delete a photo and try again.');
+      next();
+    };
+    r.onerror=()=>next();
     r.readAsDataURL(f);
-  });
+  }
+  next();
 }
 
 function drawPass(){
@@ -141,7 +158,6 @@ function closeM(){
   editId=null;
 }
 
-/* Smooth parallax */
 (function(){
   const img=()=>$('#bg-img');
   let targetY=0,currentY=0,raf=null,touching=false;
@@ -193,7 +209,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   };
   if($('#viewer'))$('#viewer').onclick=e=>{if(e.target===$('#viewer')){$('#viewer').classList.add('hidden');$('#viewer').classList.remove('flex')}};
 
-  // Music on first touch
   const audio=$('#bg-audio');
   let musicOn=false;
   function startMusic(){
