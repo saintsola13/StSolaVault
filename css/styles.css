@@ -250,3 +250,14 @@ body{background:#000;color:#fff;overflow:hidden}
   #bg-img{transform:none !important}
   .photo-card,.pw-card{opacity:1;transform:none;animation:none}
 }
+#pin-screen.hidden,
+#vault-screen.hidden,
+#home.hidden,
+#view-photos.hidden,
+#view-pass.hidden,
+#modal.hidden,
+#viewer.hidden{
+  display:none !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
