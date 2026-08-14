@@ -232,3 +232,62 @@ body {
 #pin-display {
   margin-bottom: 1.25rem !important;
 }
+/* ===== Clean mobile fixes ===== */
+
+/* Make PIN tile tighter and stop it from floating */
+#pin-screen .glass-tile {
+  padding: 1rem 1.25rem !important;
+  max-width: 280px !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+.pin-btn {
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 1.15rem !important;
+}
+
+#pin-display {
+  margin-bottom: 1rem !important;
+  gap: 0.6rem !important;
+}
+
+#pin-screen {
+  padding: 1rem !important;
+  justify-content: center !important;
+}
+
+/* Password modal – keep it fully visible */
+#password-modal {
+  align-items: flex-start !important;
+  padding-top: 12vh !important;
+  overflow-y: auto;
+}
+
+#password-modal .glass-tile {
+  animation: none !important;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Stop main tiles from needing scroll */
+#vault-screen {
+  overflow: hidden;
+}
+
+#home-tiles {
+  overflow: visible;
+}
+
+/* Better safe area */
+@supports (padding: max(0px)) {
+  #pin-screen {
+    padding-top: max(1rem, env(safe-area-inset-top)) !important;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+  }
+  #vault-screen {
+    padding-top: max(0.75rem, env(safe-area-inset-top)) !important;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom)) !important;
+  }
+}
