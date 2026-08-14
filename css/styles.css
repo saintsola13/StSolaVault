@@ -114,3 +114,16 @@ body{background:#000;color:#fff;overflow:hidden}
 
 #photos-grid,#pass-list{scrollbar-width:none}
 #photos-grid::-webkit-scrollbar,#pass-list::-webkit-scrollbar{display:none}
+#pin-screen{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:100dvh !important;
+  padding:1.5rem !important;
+}
+#pin-screen .glass{
+  margin:auto !important;
+  width:100% !important;
+  max-width:280px !important;
+}
