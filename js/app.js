@@ -9,7 +9,6 @@ let currentPin = '';
 let isSetupMode = false;
 let editingPasswordId = null;
 
-// ---------- Helpers ----------
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return document.querySelectorAll(sel); }
 
@@ -27,7 +26,6 @@ function save(key, value) {
 }
 
 function simpleHash(str) {
-  // Lightweight non-crypto hash just so PIN isn't plain text
   let h = 0;
   for (let i = 0; i < str.length; i++) {
     h = ((h << 5) - h) + str.charCodeAt(i);
@@ -36,7 +34,6 @@ function simpleHash(str) {
   return 'h' + Math.abs(h).toString(36);
 }
 
-// ---------- PIN Logic ----------
 function initPinScreen() {
   const stored = localStorage.getItem(STORAGE_KEYS.pin);
   isSetupMode = !stored;
@@ -56,7 +53,6 @@ function handlePinInput(num) {
   if (currentPin.length >= 6) return;
   currentPin += num;
   updatePinDots();
-
   if (currentPin.length === 6) {
     setTimeout(checkPin, 180);
   }
@@ -70,20 +66,17 @@ function handlePinBack() {
 
 function checkPin() {
   const storedHash = localStorage.getItem(STORAGE_KEYS.pin);
-
   if (isSetupMode) {
     localStorage.setItem(STORAGE_KEYS.pin, simpleHash(currentPin));
     enterVault();
     return;
   }
-
   if (simpleHash(currentPin) === storedHash) {
     enterVault();
   } else {
     $('#pin-error').style.opacity = '1';
     currentPin = '';
     updatePinDots();
-    // shake effect
     const tile = $('#pin-screen .glass-tile');
     tile.style.transform = 'translateX(8px)';
     setTimeout(() => tile.style.transform = 'translateX(-8px)', 60);
@@ -105,7 +98,6 @@ function lockVault() {
   initPinScreen();
 }
 
-// ---------- Navigation ----------
 function showHome() {
   $('#home-tiles').classList.remove('hidden');
   $('#photos-view').classList.add('hidden');
@@ -126,7 +118,6 @@ function showPasswords() {
   renderPasswords();
 }
 
-// ---------- Photos ----------
 function getPhotos() {
   return load(STORAGE_KEYS.photos, []);
 }
@@ -135,12 +126,10 @@ function renderPhotos() {
   const grid = $('#photos-grid');
   const photos = getPhotos();
   grid.innerHTML = '';
-
   if (photos.length === 0) {
     grid.innerHTML = `<div class="col-span-2 text-center opacity-60 py-12 text-sm">No photos yet</div>`;
     return;
   }
-
   photos.forEach((p, idx) => {
     const card = document.createElement('div');
     card.className = 'photo-card';
@@ -160,10 +149,8 @@ function renderPhotos() {
 function addPhotos(files) {
   const photos = getPhotos();
   const readers = [];
-
   Array.from(files).forEach(file => {
     if (!file.type.startsWith('image/')) return;
-    // Limit size roughly
     if (file.size > 4 * 1024 * 1024) {
       alert('Image too large (max ~4MB)');
       return;
@@ -182,34 +169,14 @@ function addPhotos(files) {
       reader.readAsDataURL(file);
     }));
   });
-
   Promise.all(readers).then(() => {
-    // Keep only last 40 to avoid localStorage bloat
     save(STORAGE_KEYS.photos, photos.slice(0, 40));
     renderPhotos();
   });
 }
 
 function deletePhoto(idx) {
-  const photos = getPhotos();
-  photos.splice(idx, 1);
-  save(STORAGE_KEYS.photos, photos);
-  renderPhotos();
-}
-
-function openViewer(src) {
-  $('#viewer-img').src = src;
-  $('#photo-viewer').classList.remove('hidden');
-  $('#photo-viewer').classList.add('flex');
-}
-
-function closeViewer() {
-  $('#photo-viewer').classList.add('hidden');
-  $('#photo-viewer').classList.remove('flex');
-  $('#viewer-img').src = '';
-}
-
-// ---------- Passwords ----------
+  const photos =// ---------- Passwords ----------
 function getPasswords() {
   return load(STORAGE_KEYS.passwords, []);
 }
@@ -241,7 +208,6 @@ function renderPasswords() {
     list.appendChild(card);
   });
 
-  // Event delegation
   list.querySelectorAll('[data-edit]').forEach(btn => {
     btn.addEventListener('click', () => openPasswordModal(btn.dataset.edit));
   });
@@ -314,4 +280,69 @@ function savePassword(e) {
     });
   }
 
-  save(STORAGE_
+  save(STORAGE_KEYS.passwords, items);
+  closePasswordModal();
+  renderPasswords();
+}
+
+function deletePassword(id) {
+  if (!confirm('Delete this password?')) return;
+  const items = getPasswords().filter(p => p.id !== id);
+  save(STORAGE_KEYS.passwords, items);
+  renderPasswords();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ---------- Events ----------
+function bindEvents() {
+  // PIN pad
+  $$('.pin-btn[data-num]').forEach(btn => {
+    btn.addEventListener('click', () => handlePinInput(btn.dataset.num));
+  });
+  $('#pin-back').addEventListener('click', handlePinBack);
+
+  // Navigation
+  $('#photos-tile').addEventListener('click', showPhotos);
+  $('#passwords-tile').addEventListener('click', showPasswords);
+  $$('[data-back]').forEach(btn => btn.addEventListener('click', showHome));
+  $('#logout-btn').addEventListener('click', lockVault);
+
+  // Photos
+  $('#photo-input').addEventListener('change', (e) => {
+    if (e.target.files?.length) addPhotos(e.target.files);
+    e.target.value = '';
+  });
+
+  // Passwords
+  $('#add-password-btn').addEventListener('click', () => openPasswordModal());
+  $('#password-form').addEventListener('submit', savePassword);
+  $('#modal-cancel').addEventListener('click', closePasswordModal);
+
+  // Viewer
+  $('#viewer-close').addEventListener('click', closeViewer);
+  $('#photo-viewer').addEventListener('click', (e) => {
+    if (e.target === $('#photo-viewer')) closeViewer();
+  });
+
+  // Keyboard support for PIN
+  document.addEventListener('keydown', (e) => {
+    if ($('#pin-screen').classList.contains('hidden')) return;
+    if (e.key >= '0' && e.key <= '9') handlePinInput(e.key);
+    if (e.key === 'Backspace') handlePinBack();
+  });
+}
+
+// ---------- Init ----------
+document.addEventListener('DOMContentLoaded', () => {
+  bindEvents();
+  initPinScreen();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+});
