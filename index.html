@@ -8,135 +8,110 @@
   <meta name="theme-color" content="#0a0a0f" />
   <title>StSolaVault</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="public/icon-192.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/styles.css" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
 </head>
-<body class="bg-black text-black overflow-hidden">
+<body>
   <div id="bg" class="fixed inset-0 z-0">
-    <img src="IMG_3904.jpeg" alt="" class="w-full h-full object-cover" />
-    <div class="absolute inset-0 bg-black/40"></div>
+    <img src="IMG_3904.jpeg" alt="" id="bg-img" />
+    <div class="absolute inset-0 bg-black/35"></div>
   </div>
 
   <div id="app" class="relative z-10 min-h-screen flex flex-col">
-    <div id="pin-screen" class="flex-1 flex flex-col items-center justify-center p-6">
-      <div class="glass-tile w-full max-w-sm p-8 text-center">
-        <h1 class="text-2xl font-bold tracking-tight mb-1">StSolaVault</h1>
-        <p class="text-sm opacity-70 mb-8">Enter 6-digit PIN</p>
-        
-        <div id="pin-display" class="flex justify-center gap-3 mb-8">
-          <div class="pin-dot" data-index="0"></div>
-          <div class="pin-dot" data-index="1"></div>
-          <div class="pin-dot" data-index="2"></div>
-          <div class="pin-dot" data-index="3"></div>
-          <div class="pin-dot" data-index="4"></div>
-          <div class="pin-dot" data-index="5"></div>
+    <!-- PIN -->
+    <div id="pin-screen" class="flex-1 flex flex-col items-center justify-center p-5">
+      <div class="glass w-full max-w-[290px] p-6 text-center">
+        <h1 class="text-xl font-bold tracking-tight mb-1">StSolaVault</h1>
+        <p class="text-sm opacity-60 mb-6">Enter 6-digit PIN</p>
+        <div id="pin-display" class="flex justify-center gap-2.5 mb-6">
+          <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+          <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
         </div>
-
-        <div id="pin-error" class="text-red-600 text-sm h-5 mb-4 opacity-0 transition-opacity">Wrong PIN</div>
-
-        <div class="grid grid-cols-3 gap-3 max-w-[240px] mx-auto">
-          <button class="pin-btn" data-num="1">1</button>
-          <button class="pin-btn" data-num="2">2</button>
-          <button class="pin-btn" data-num="3">3</button>
-          <button class="pin-btn" data-num="4">4</button>
-          <button class="pin-btn" data-num="5">5</button>
-          <button class="pin-btn" data-num="6">6</button>
-          <button class="pin-btn" data-num="7">7</button>
-          <button class="pin-btn" data-num="8">8</button>
-          <button class="pin-btn" data-num="9">9</button>
-          <button class="pin-btn opacity-0 pointer-events-none">·</button>
-          <button class="pin-btn" data-num="0">0</button>
-          <button class="pin-btn" id="pin-back" data-action="back">⌫</button>
+        <div id="pin-error" class="text-red-400 text-sm h-5 mb-3 opacity-0">Wrong PIN</div>
+        <div class="grid grid-cols-3 gap-2.5 max-w-[220px] mx-auto">
+          <button class="pin-btn" data-n="1">1</button>
+          <button class="pin-btn" data-n="2">2</button>
+          <button class="pin-btn" data-n="3">3</button>
+          <button class="pin-btn" data-n="4">4</button>
+          <button class="pin-btn" data-n="5">5</button>
+          <button class="pin-btn" data-n="6">6</button>
+          <button class="pin-btn" data-n="7">7</button>
+          <button class="pin-btn" data-n="8">8</button>
+          <button class="pin-btn" data-n="9">9</button>
+          <button class="pin-btn opacity-0 pointer-events-none"></button>
+          <button class="pin-btn" data-n="0">0</button>
+          <button class="pin-btn" id="pin-back">⌫</button>
         </div>
-
-        <p id="pin-setup-hint" class="text-xs opacity-60 mt-6 hidden">First time? This will set your PIN.</p>
+        <p id="pin-hint" class="text-xs opacity-50 mt-5 hidden">First time? This sets your PIN.</p>
       </div>
     </div>
 
-    <div id="vault-screen" class="hidden flex-1 flex flex-col p-4 pb-8">
-      <header class="flex items-center justify-between mb-6 pt-2">
-        <h1 class="text-xl font-bold tracking-tight">StSolaVault</h1>
-        <button id="logout-btn" class="glass-btn text-sm px-3 py-1.5">Lock</button>
+    <!-- Vault -->
+    <div id="vault-screen" class="hidden flex-1 flex flex-col p-4">
+      <header class="flex items-center justify-between mb-5 pt-1">
+        <h1 class="text-lg font-bold">StSolaVault</h1>
+        <button id="lock-btn" class="glass-btn text-sm px-3 py-1.5">Lock</button>
       </header>
 
-      <div id="home-tiles" class="grid grid-cols-1 gap-4 flex-1 content-start">
-        <button id="photos-tile" class="glass-tile tile-press p-6 text-left flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-black/10 flex items-center justify-center text-2xl">📷</div>
-          <div>
-            <div class="font-semibold text-lg">Photos</div>
-            <div class="text-sm opacity-70">Upload & view</div>
-          </div>
+      <div id="home" class="grid gap-3 flex-1 content-start">
+        <button id="btn-photos" class="glass p-5 text-left flex items-center gap-4">
+          <div class="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center text-xl">📷</div>
+          <div><div class="font-semibold">Photos</div><div class="text-sm opacity-50">Upload & view</div></div>
         </button>
-
-        <button id="passwords-tile" class="glass-tile tile-press p-6 text-left flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-black/10 flex items-center justify-center text-2xl">🔐</div>
-          <div>
-            <div class="font-semibold text-lg">Passwords</div>
-            <div class="text-sm opacity-70">Save credentials</div>
-          </div>
+        <button id="btn-pass" class="glass p-5 text-left flex items-center gap-4">
+          <div class="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center text-xl">🔐</div>
+          <div><div class="font-semibold">Passwords</div><div class="text-sm opacity-50">Save credentials</div></div>
         </button>
       </div>
 
-      <div id="photos-view" class="hidden flex-1 flex flex-col">
+      <!-- Photos -->
+      <div id="view-photos" class="hidden flex-1 flex flex-col">
         <div class="flex items-center gap-3 mb-4">
-          <button class="back-btn glass-btn px-3 py-1.5 text-sm" data-back>← Back</button>
-          <h2 class="font-semibold text-lg">Photos</h2>
+          <button class="glass-btn px-3 py-1.5 text-sm" data-back>← Back</button>
+          <h2 class="font-semibold">Photos</h2>
         </div>
-        <div class="mb-4">
-          <label class="glass-tile tile-press inline-flex items-center gap-2 px-4 py-3 cursor-pointer">
-            <span class="text-xl">＋</span>
-            <span class="font-medium">Add Photo</span>
-            <input type="file" id="photo-input" accept="image/*" class="hidden" multiple />
-          </label>
-        </div>
-        <div id="photos-grid" class="grid grid-cols-2 gap-3 overflow-y-auto flex-1 pb-4"></div>
+        <button id="btn-add-photo" class="glass mb-3 px-4 py-3 flex items-center gap-2">
+          <span class="text-lg">＋</span><span class="font-medium">Add Photo</span>
+        </button>
+        <input type="file" id="photo-input" accept="image/*" class="hidden" multiple />
+        <div id="photos-grid" class="grid grid-cols-2 gap-2.5 overflow-y-auto flex-1 pb-6"></div>
       </div>
 
-      <div id="passwords-view" class="hidden flex-1 flex flex-col">
+      <!-- Passwords -->
+      <div id="view-pass" class="hidden flex-1 flex flex-col">
         <div class="flex items-center gap-3 mb-4">
-          <button class="back-btn glass-btn px-3 py-1.5 text-sm" data-back>← Back</button>
-          <h2 class="font-semibold text-lg">Passwords</h2>
+          <button class="glass-btn px-3 py-1.5 text-sm" data-back>← Back</button>
+          <h2 class="font-semibold">Passwords</h2>
         </div>
-        <button id="add-password-btn" class="glass-tile tile-press mb-4 px-4 py-3 flex items-center gap-2">
-          <span class="text-xl">＋</span>
-          <span class="font-medium">Add Password</span>
+        <button id="btn-add-pass" class="glass mb-3 px-4 py-3 flex items-center gap-2">
+          <span class="text-lg">＋</span><span class="font-medium">Add Password</span>
         </button>
-        <div id="passwords-list" class="space-y-3 overflow-y-auto flex-1 pb-4"></div>
+        <div id="pass-list" class="space-y-2.5 overflow-y-auto flex-1 pb-6"></div>
       </div>
     </div>
   </div>
 
-  <div id="password-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60">
-    <div class="glass-tile w-full max-w-sm p-6">
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 z-50 hidden items-start justify-center p-4 pt-[12vh] bg-black/60">
+    <div class="glass w-full max-w-sm p-5">
       <h3 id="modal-title" class="font-semibold text-lg mb-4">Add Password</h3>
-      <form id="password-form" class="space-y-3">
-        <input type="text" id="pw-title" placeholder="Title (e.g. Gmail)" class="glass-input" required />
-        <input type="text" id="pw-username" placeholder="Username / Email" class="glass-input" />
-        <input type="text" id="pw-password" placeholder="Password" class="glass-input" required />
-        <input type="text" id="pw-notes" placeholder="Notes (optional)" class="glass-input" />
+      <form id="pass-form" class="space-y-3">
+        <input type="text" id="f-title" placeholder="Title" class="glass-input" required />
+        <input type="text" id="f-user" placeholder="Username / Email" class="glass-input" />
+        <input type="text" id="f-pass" placeholder="Password" class="glass-input" required />
+        <input type="text" id="f-notes" placeholder="Notes" class="glass-input" />
         <div class="flex gap-2 pt-2">
           <button type="button" id="modal-cancel" class="glass-btn flex-1 py-2.5">Cancel</button>
-          <button type="submit" class="glass-btn flex-1 py-2.5 bg-black text-white border-black">Save</button>
+          <button type="submit" class="glass-btn flex-1 py-2.5 bg-white/20">Save</button>
         </div>
       </form>
     </div>
   </div>
 
-  <div id="photo-viewer" class="fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4">
-    <button id="viewer-close" class="absolute top-4 right-4 text-white text-3xl leading-none">&times;</button>
-    <img id="viewer-img" src="" class="max-w-full max-h-full object-contain rounded-lg" />
+  <!-- Viewer -->
+  <div id="viewer" class="fixed inset-0 z-50 hidden bg-black/90 items-center justify-center p-4">
+    <button id="viewer-close" class="absolute top-5 right-5 text-white text-3xl">&times;</button>
+    <img id="viewer-img" class="max-w-full max-h-full object-contain rounded-xl" />
   </div>
 
   <script src="js/app.js"></script>
