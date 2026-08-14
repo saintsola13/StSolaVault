@@ -7,12 +7,12 @@ const hash=s=>{let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i)|0
 
 function dots(){$$('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pin.length))}
 function pinIn(n){if(pin.length>=6)return;pin+=n;dots();if(pin.length===6)setTimeout(check,120)}
-function pinBk(){pin=pin.slice(0,-1);dots();$('#pin-error').style.opacity='0'}
+function pinBk(){pin=pin.slice(0,-1);dots();if($('#pin-error'))$('#pin-error').style.opacity='0'}
 function check(){
   const s=localStorage.getItem(K.pin);
   if(!s){localStorage.setItem(K.pin,hash(pin));enter();return}
   if(hash(pin)===s)enter();
-  else{$('#pin-error').style.opacity='1';pin='';dots()}
+  else{if($('#pin-error'))$('#pin-error').style.opacity='1';pin='';dots()}
 }
 function enter(){$('#pin-screen').classList.add('hidden');$('#vault-screen').classList.remove('hidden');home()}
 function lock(){pin='';$('#vault-screen').classList.add('hidden');$('#pin-screen').classList.remove('hidden');dots()}
@@ -22,12 +22,13 @@ function goPass(){$('#home').classList.add('hidden');$('#view-photos').classList
 
 function drawPhotos(){
   const g=$('#photos-grid'),ps=load(K.photos,[]);
+  if(!g)return;
   g.innerHTML='';
   if(!ps.length){g.innerHTML='<div class="col-span-2 text-center opacity-50 py-10 text-sm">No photos yet</div>';return}
   ps.forEach((p,i)=>{
     const c=document.createElement('div');c.className='photo-card';
     c.innerHTML=`<img src="${p.d}"><button class="del">×</button>`;
-    c.querySelector('img').onclick=()=>{$('#viewer-img').src=p.d;$('#viewer').classList.remove('hidden');$('#viewer').classList.add('flex')};
+    c.querySelector('img').onclick=()=>{if($('#viewer-img'))$('#viewer-img').src=p.d;$('#viewer').classList.remove('hidden');$('#viewer').classList.add('flex')};
     c.querySelector('.del').onclick=e=>{e.stopPropagation();ps.splice(i,1);save(K.photos,ps);drawPhotos()};
     g.appendChild(c);
   });
@@ -40,9 +41,9 @@ function addPhotos(files){
     r.onload=()=>{ps.unshift({id:Date.now()+Math.random(),d:r.result});save(K.photos,ps.slice(0,20));drawPhotos()};
     r.readAsDataURL(f);
   });
-}
-function drawPass(){
+}function drawPass(){
   const list=$('#pass-list'),items=load(K.pass,[]);
+  if(!list)return;
   list.innerHTML='';
   if(!items.length){list.innerHTML='<div class="text-center opacity-50 py-10 text-sm">No passwords yet</div>';return}
   items.forEach(it=>{
@@ -67,15 +68,15 @@ function closeM(){$('#modal').classList.add('hidden');$('#modal').classList.remo
 
 document.addEventListener('DOMContentLoaded',()=>{
   $$('.pin-btn[data-n]').forEach(b=>b.onclick=()=>pinIn(b.dataset.n));
-  $('#pin-back').onclick=pinBk;
-  $('#lock-btn').onclick=lock;
-  $('#btn-photos').onclick=goPhotos;
-  $('#btn-pass').onclick=goPass;
+  if($('#pin-back'))$('#pin-back').onclick=pinBk;
+  if($('#lock-btn'))$('#lock-btn').onclick=lock;
+  if($('#btn-photos'))$('#btn-photos').onclick=goPhotos;
+  if($('#btn-pass'))$('#btn-pass').onclick=goPass;
   $$('[data-back]').forEach(b=>b.onclick=home);
-  $('#btn-add-photo').onclick=()=>$('#photo-input').click();
-  $('#photo-input').onchange=e=>{if(e.target.files?.length)addPhotos(e.target.files);e.target.value=''};
-  $('#btn-add-pass').onclick=()=>openM();
-  $('#pass-form').onsubmit=e=>{
+  if($('#btn-add-photo'))$('#btn-add-photo').onclick=()=>$('#photo-input')&&$('#photo-input').click();
+  if($('#photo-input'))$('#photo-input').onchange=e=>{if(e.target.files?.length)addPhotos(e.target.files);e.target.value=''};
+  if($('#btn-add-pass'))$('#btn-add-pass').onclick=()=>openM();
+  if($('#pass-form'))$('#pass-form').onsubmit=e=>{
     e.preventDefault();
     const t=$('#f-title').value.trim(),u=$('#f-user').value.trim(),p=$('#f-pass').value,n=$('#f-notes').value.trim();
     if(!t||!p)return;
@@ -84,10 +85,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     else items.unshift({id:Date.now().toString(36),t,u,p,n});
     save(K.pass,items);closeM();drawPass();
   };
-  $('#modal-cancel').onclick=closeM;
-  $('#viewer-close').onclick=()=>{$('#viewer').classList.add('hidden');$('#viewer').classList.remove('flex')};
+  if($('#modal-cancel'))$('#modal-cancel').onclick=closeM;
+  if($('#viewer-close'))$('#viewer-close').onclick=()=>{$('#viewer').classList.add('hidden');$('#viewer').classList.remove('flex')};
 
-  // light background move on touch
   let startY=0;
   document.addEventListener('touchstart',e=>{startY=e.touches[0].clientY},{passive:true});
   document.addEventListener('touchmove',e=>{
@@ -97,5 +97,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   },{passive:true});
 
   const has=!!localStorage.getItem(K.pin);
-  $('#pin-hint').classList.toggle('hidden',has);
+  if($('#pin-hint'))$('#pin-hint').classList.toggle('hidden',has);
 });
