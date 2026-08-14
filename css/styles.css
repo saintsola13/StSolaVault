@@ -1,104 +1,116 @@
-*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
-html,body{height:100%;overscroll-behavior:none;margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0}
+html,body{height:100%;overscroll-behavior:none;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif}
 body{background:#000;color:#fff;overflow:hidden}
 
-/* Premium dark glass */
-.glass-tile{
-  background:rgba(15,15,25,0.55);
-  backdrop-filter:blur(28px) saturate(180%);
-  -webkit-backdrop-filter:blur(28px) saturate(180%);
-  border:1px solid rgba(255,255,255,0.18);
-  border-radius:1.35rem;
-  box-shadow:0 12px 40px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.12);
-  color:#fff;
-  transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s ease,background .2s ease;
+/* Background with parallax feel */
+#bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+#bg-img{
+  width:112%;height:112%;
+  object-fit:cover;
+  position:absolute;top:-6%;left:-6%;
+  will-change:transform;
+  transition:transform .1s linear;
 }
-.glass-tile:active,.tile-press:active{
-  transform:scale(.96);
-  background:rgba(25,25,40,0.7);
-  box-shadow:0 4px 20px rgba(0,0,0,0.5);
+#bg .absolute{pointer-events:none}
+
+/* Clear glass */
+.glass{
+  background:rgba(255,255,255,0.13);
+  backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  border:1px solid rgba(255,255,255,0.28);
+  border-radius:1.25rem;
+  box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 1px 0 rgba(255,255,255,0.25);
+  color:#fff;
+  transition:transform .18s cubic-bezier(.2,.8,.2,1),background .18s,box-shadow .18s;
+}
+.glass:active{
+  transform:scale(.97);
+  background:rgba(255,255,255,0.2);
+  box-shadow:0 4px 18px rgba(0,0,0,0.35);
 }
 
 .glass-btn{
-  background:rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.14);
   backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:.9rem;
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:.85rem;
   color:#fff;
   font-weight:500;
-  transition:all .15s ease;
+  transition:all .15s;
 }
-.glass-btn:active{transform:scale(.95);background:rgba(255,255,255,0.22)}
+.glass-btn:active{transform:scale(.95);background:rgba(255,255,255,0.25)}
 
 .glass-input{
   width:100%;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.18);
-  border-radius:.9rem;
-  padding:.8rem 1rem;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:.85rem;
+  padding:.75rem 1rem;
   color:#fff;
   font-size:1rem;
   outline:none;
 }
-.glass-input::placeholder{color:rgba(255,255,255,0.4)}
-.glass-input:focus{border-color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.12)}
+.glass-input::placeholder{color:rgba(255,255,255,0.45)}
+.glass-input:focus{border-color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.18)}
 
 /* PIN */
-.pin-dot{width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,0.45);transition:all .15s}
+.pin-dot{
+  width:12px;height:12px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.5);
+  transition:all .15s;
+}
 .pin-dot.filled{background:#fff;border-color:#fff;transform:scale(1.15)}
 .pin-btn{
-  width:54px;height:54px;border-radius:50%;
-  background:rgba(255,255,255,0.1);
-  border:1px solid rgba(255,255,255,0.2);
-  font-size:1.35rem;font-weight:500;color:#fff;
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.22);
+  font-size:1.3rem;font-weight:500;color:#fff;
   display:flex;align-items:center;justify-content:center;
-  transition:transform .12s ease,background .12s;
+  transition:transform .12s,background .12s;
 }
-.pin-btn:active{transform:scale(.9);background:rgba(255,255,255,0.25)}
-
-#pin-screen .glass-tile{padding:1.4rem 1.5rem;max-width:300px;animation:none!important}
+.pin-btn:active{transform:scale(.9);background:rgba(255,255,255,0.28)}
 
 /* Photos */
-.photo-card{position:relative;aspect-ratio:1;border-radius:1rem;overflow:hidden;border:1px solid rgba(255,255,255,0.15);background:rgba(0,0,0,0.3)}
+.photo-card{
+  position:relative;aspect-ratio:1;border-radius:1rem;overflow:hidden;
+  border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.25);
+}
 .photo-card img{width:100%;height:100%;object-fit:cover}
-.photo-card .delete-btn{
-  position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;
-  background:rgba(0,0,0,0.65);color:#fff;border:none;font-size:14px;
+.photo-card .del{
+  position:absolute;top:5px;right:5px;width:26px;height:26px;border-radius:50%;
+  background:rgba(0,0,0,0.6);color:#fff;border:none;font-size:13px;
   display:flex;align-items:center;justify-content:center;
 }
 
 /* Password cards */
 .pw-card{
-  background:rgba(15,15,25,0.55);
-  backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,0.15);
-  border-radius:1.1rem;padding:1rem 1.1rem;color:#fff;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:1rem;padding:.9rem 1rem;color:#fff;
 }
-.pw-card .pw-title{font-weight:600;font-size:1.05rem}
-.pw-card .pw-meta{font-size:.85rem;opacity:.65;margin-top:2px}
-.pw-actions{display:flex;gap:8px;margin-top:10px}
-.pw-actions button{
-  font-size:.8rem;padding:5px 11px;border-radius:.5rem;
-  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;
-}
-
-/* Modal */
-#password-modal{align-items:flex-start;padding-top:10vh;overflow-y:auto}
-#password-modal .glass-tile{max-height:78vh;overflow-y:auto;animation:none}
-
-/* Soft alive feeling */
-@keyframes softGlow{
-  0%,100%{box-shadow:0 12px 40px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.12)}
-  50%{box-shadow:0 12px 40px rgba(0,0,0,0.45),0 0 30px rgba(120,100,255,0.08),inset 0 1px 0 rgba(255,255,255,0.18)}
-}
-#home-tiles .glass-tile{animation:softGlow 7s ease-in-out infinite}
-#home-tiles .glass-tile:nth-child(2){animation-delay:2.5s}
-
-/* Safe areas */
-@supports (padding:max(0px)){
-  #pin-screen{padding-top:max(1.2rem,env(safe-area-inset-top));padding-bottom:max(1.2rem,env(safe-area-inset-bottom))}
-  #vault-screen{padding-top:max(.8rem,env(safe-area-inset-top));padding-bottom:max(1.8rem,env(safe-area-inset-bottom))}
+.pw-card .t{font-weight:600;font-size:1.02rem}
+.pw-card .m{font-size:.82rem;opacity:.65;margin-top:2px}
+.pw-card .actions{display:flex;gap:7px;margin-top:9px}
+.pw-card .actions button{
+  font-size:.78rem;padding:4px 10px;border-radius:.45rem;
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);color:#fff;
 }
 
-#photos-grid,#passwords-list{scrollbar-width:none;-ms-overflow-style:none}
-#photos-grid::-webkit-scrollbar,#passwords-list::-webkit-scrollbar{display:none}
+/* Soft alive glow on home tiles */
+@keyframes glow{
+  0%,100%{box-shadow:0 8px 32px rgba(0,0,0,0.28),inset 0 1px 0 rgba(255,255,255,0.25)}
+  50%{box-shadow:0 8px 32px rgba(0,0,0,0.28),0 0 24px rgba(140,120,255,0.12),inset 0 1px 0 rgba(255,255,255,0.35)}
+}
+#home .glass{animation:glow 6.5s ease-in-out infinite}
+#home .glass:nth-child(2){animation-delay:2s}
+
+/* Safe area */
+@supports(padding:max(0px)){
+  #pin-screen{padding-top:max(1rem,env(safe-area-inset-top));padding-bottom:max(1rem,env(safe-area-inset-bottom))}
+  #vault-screen{padding-top:max(.7rem,env(safe-area-inset-top));padding-bottom:max(1.6rem,env(safe-area-inset-bottom))}
+}
+
+#photos-grid,#pass-list{scrollbar-width:none}
+#photos-grid::-webkit-scrollbar,#pass-list::-webkit-scrollbar{display:none}
