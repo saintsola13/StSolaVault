@@ -54,7 +54,14 @@ function addPhotos(files){
     list.appendChild(c);
   });
   list.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>openM(b.dataset.e));
-  list.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{if(confirm('Delete?')){save(K.pass,items.filter(x=>x.id!==b.dataset.d));drawPass()}});
+  list.querySelectorAll('[data-d]').forEach(b=>b.onclick=e=>{
+  e.preventDefault();e.stopPropagation();
+  if(confirm('Delete this password?')){
+    const id=b.getAttribute('data-d');
+    save(K.pass,load(K.pass,[]).filter(x=>x.id!==id));
+    drawPass();
+  }
+});
   list.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const it=items.find(x=>x.id===b.dataset.c);if(it)navigator.clipboard.writeText(it.p).then(()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy',800)})});
 }
 
