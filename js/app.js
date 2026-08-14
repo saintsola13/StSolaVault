@@ -44,9 +44,7 @@ function addPhotos(files){
     r.onload=()=>{photos.unshift({id:Date.now()+Math.random(),data:r.result});save(STORAGE_KEYS.photos,photos.slice(0,30));renderPhotos()};
     r.readAsDataURL(f);
   });
-}
-
-function renderPasswords(){
+}function renderPasswords(){
   const list=$('#passwords-list'),items=load(STORAGE_KEYS.passwords,[]);
   list.innerHTML='';
   if(!items.length){list.innerHTML='<div class="text-center opacity-60 py-10 text-sm">No passwords saved</div>';return}
