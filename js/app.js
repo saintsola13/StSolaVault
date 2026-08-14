@@ -80,8 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   $('#pin-back').addEventListener('click', handlePinBack);
   $('#logout-btn').addEventListener('click', lockVault);
-
-  // Tiles
   $('#photos-tile').addEventListener('click', showPhotos);
   $('#passwords-tile').addEventListener('click', showPasswords);
   $$('[data-back]').forEach(btn => btn.addEventListener('click', showHome));
