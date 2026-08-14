@@ -87,6 +87,7 @@ function drawPhotos(){
       if(v){v.classList.remove('hidden');v.classList.add('flex')}
     };
     c.querySelector('.del').onclick=e=>{
+      e.preventDefault();
       e.stopPropagation();
       const next=load(K.photos,[]).filter(x=>x.id!==p.id);
       save(K.photos,next);
@@ -96,23 +97,45 @@ function drawPhotos(){
   });
 }
 
+/* Compress photo so multiple fit in Safari storage */
+function compressImage(file,maxW,quality){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      let w=img.width,h=img.height;
+      if(w>maxW){h=Math.round(h*maxW/w);w=maxW}
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      resolve(canvas.toDataURL('image/jpeg',quality));
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject()};
+    img.src=url;
+  });
+}
+
 function addPhotos(files){
-  const list=[...files].filter(f=>f.type.startsWith('image/')&&f.size<=4e6);
+  const list=[...files].filter(f=>f.type.startsWith('image/'));
   if(!list.length)return;
   let i=0;
-  function next(){
+  async function next(){
     if(i>=list.length){drawPhotos();return}
     const f=list[i++];
-    const r=new FileReader();
-    r.onload=()=>{
+    try{
+      const data=await compressImage(f,900,0.65);
       const ps=load(K.photos,[]);
-      ps.unshift({id:Date.now()+'_'+Math.random().toString(36).slice(2),d:r.result});
-      const ok=save(K.photos,ps.slice(0,15));
-      if(!ok)alert('Storage full. Delete a photo and try again.');
-      next();
-    };
-    r.onerror=()=>next();
-    r.readAsDataURL(f);
+      ps.unshift({id:Date.now()+'_'+Math.random().toString(36).slice(2),d:data});
+      const ok=save(K.photos,ps.slice(0,12));
+      if(!ok){
+        alert('Storage full. Delete a photo first.');
+        drawPhotos();
+        return;
+      }
+    }catch(e){console.warn(e)}
+    next();
   }
   next();
 }
