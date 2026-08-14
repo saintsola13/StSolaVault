@@ -1,0 +1,198 @@
+/* Core */
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Glass tiles - matching stsola.com vibe */
+.glass-tile {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 1.25rem;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  color: #0a0a0a;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.glass-tile:active,
+.tile-press:active {
+  transform: scale(0.97);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.glass-btn {
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 0.875rem;
+  color: #0a0a0a;
+  font-weight: 500;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.glass-btn:active {
+  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.glass-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 0.875rem;
+  padding: 0.75rem 1rem;
+  color: #0a0a0a;
+  font-size: 1rem;
+  outline: none;
+}
+
+.glass-input::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.glass-input:focus {
+  border-color: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* PIN */
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.55);
+  background: transparent;
+  transition: all 0.15s ease;
+}
+
+.pin-dot.filled {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  transform: scale(1.1);
+}
+
+.pin-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.pin-btn:active {
+  transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Photos grid */
+.photo-card {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-card .delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  border: none;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+}
+
+/* Password cards */
+.pw-card {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  color: #0a0a0a;
+}
+
+.pw-card .pw-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.pw-card .pw-meta {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.pw-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.pw-actions button {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* Safe area for notched phones */
+@supports (padding: max(0px)) {
+  #vault-screen {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+  #pin-screen {
+    padding-top: max(1.5rem, env(safe-area-inset-top));
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Hide scrollbar but keep functionality */
+#photos-grid, #passwords-list {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+#photos-grid::-webkit-scrollbar,
+#passwords-list::-webkit-scrollbar {
+  display: none;
+}
