@@ -84,7 +84,7 @@ function drawPhotos(){
     c.querySelector('img').onclick=()=>{
       const vi=$('#viewer-img'),v=$('#viewer');
       if(vi)vi.src=p.d;
-      if(v){v.classList.remove('hidden');v.classList.add('flex');if(!reduceMotion())v.style.opacity='0',requestAnimationFrame(()=>{v.style.opacity='1'})}
+      if(v){v.classList.remove('hidden');v.classList.add('flex')}
     };
     c.querySelector('.del').onclick=e=>{e.stopPropagation();ps.splice(i,1);save(K.photos,ps);drawPhotos()};
     g.appendChild(c);
@@ -156,21 +156,15 @@ function closeM(){
   }
   function start(){if(!raf&&!reduceMotion())raf=requestAnimationFrame(tick)}
   let startY=0;
-  document.addEventListener('touchstart',e=>{
-    touching=true;startY=e.touches[0].clientY;
-  },{passive:true});
+  document.addEventListener('touchstart',e=>{touching=true;startY=e.touches[0].clientY},{passive:true});
   document.addEventListener('touchmove',e=>{
     if(reduceMotion())return;
     const dy=(e.touches[0].clientY-startY)*0.03;
     targetY=Math.max(-max,Math.min(max,dy));
     start();
   },{passive:true});
-  document.addEventListener('touchend',()=>{
-    touching=false;targetY=0;start();
-  },{passive:true});
-  document.addEventListener('touchcancel',()=>{
-    touching=false;targetY=0;start();
-  },{passive:true});
+  document.addEventListener('touchend',()=>{touching=false;targetY=0;start()},{passive:true});
+  document.addEventListener('touchcancel',()=>{touching=false;targetY=0;start()},{passive:true});
 })();
 
 document.addEventListener('DOMContentLoaded',()=>{
@@ -198,6 +192,22 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(v){v.classList.add('hidden');v.classList.remove('flex')}
   };
   if($('#viewer'))$('#viewer').onclick=e=>{if(e.target===$('#viewer')){$('#viewer').classList.add('hidden');$('#viewer').classList.remove('flex')}};
+
+  // Music on first touch
+  const audio=$('#bg-audio');
+  let musicOn=false;
+  function startMusic(){
+    if(!audio||musicOn)return;
+    audio.volume=0.55;
+    audio.play().then(()=>{musicOn=true}).catch(()=>{});
+  }
+  document.addEventListener('touchstart',startMusic,{once:true,passive:true});
+  document.addEventListener('click',startMusic,{once:true});
+  if($('#mute-btn'))$('#mute-btn').onclick=()=>{
+    if(!audio)return;
+    audio.muted=!audio.muted;
+    $('#mute-btn').textContent=audio.muted?'🔇':'🔊';
+  };
 
   const has=!!localStorage.getItem(K.pin);
   if($('#pin-hint'))$('#pin-hint').classList.toggle('hidden',has);
