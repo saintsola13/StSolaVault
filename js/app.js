@@ -1,6 +1,5 @@
 const STORAGE_KEYS = { pin: 'ssv_pin', photos: 'ssv_photos', passwords: 'ssv_passwords' };
 let currentPin = '';
-let isSetupMode = false;
 
 function $(s) { return document.querySelector(s); }
 function $$(s) { return document.querySelectorAll(s); }
@@ -47,6 +46,7 @@ function checkPin() {
 function enterVault() {
   $('#pin-screen').classList.add('hidden');
   $('#vault-screen').classList.remove('hidden');
+  showHome();
 }
 
 function lockVault() {
@@ -56,6 +56,24 @@ function lockVault() {
   updatePinDots();
 }
 
+function showHome() {
+  $('#home-tiles').classList.remove('hidden');
+  $('#photos-view').classList.add('hidden');
+  $('#passwords-view').classList.add('hidden');
+}
+
+function showPhotos() {
+  $('#home-tiles').classList.add('hidden');
+  $('#photos-view').classList.remove('hidden');
+  $('#passwords-view').classList.add('hidden');
+}
+
+function showPasswords() {
+  $('#home-tiles').classList.add('hidden');
+  $('#photos-view').classList.add('hidden');
+  $('#passwords-view').classList.remove('hidden');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   $$('.pin-btn[data-num]').forEach(btn => {
     btn.addEventListener('click', () => handlePinInput(btn.dataset.num));
@@ -63,7 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#pin-back').addEventListener('click', handlePinBack);
   $('#logout-btn').addEventListener('click', lockVault);
 
+  // Tiles
+  $('#photos-tile').addEventListener('click', showPhotos);
+  $('#passwords-tile').addEventListener('click', showPasswords);
+  $$('[data-back]').forEach(btn => btn.addEventListener('click', showHome));
+
   const stored = localStorage.getItem(STORAGE_KEYS.pin);
-  isSetupMode = !stored;
-  $('#pin-setup-hint').classList.toggle('hidden', !isSetupMode);
+  $('#pin-setup-hint').classList.toggle('hidden', !!stored);
 });
