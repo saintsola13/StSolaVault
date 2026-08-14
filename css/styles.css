@@ -196,3 +196,25 @@ body {
 #passwords-list::-webkit-scrollbar {
   display: none;
 }
+.glass-tile {
+  animation: floatTile 6s ease-in-out infinite;
+}
+
+.glass-tile:nth-child(2) {
+  animation-delay: 1.5s;
+}
+
+@keyframes floatTile {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.glass-tile:active,
+.tile-press:active {
+  animation: none;
+  transform: scale(0.97);
+}
